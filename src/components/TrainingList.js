@@ -1,7 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import MaterialTable from 'material-table';
+import { IconButton, Snackbar } from '@mui/material';
 import { forwardRef } from 'react';
-import { AddBox, ArrowDownward, Check, ChevronLeft, 
+import { Close, AddBox, ArrowDownward, Check, ChevronLeft, 
   ChevronRight, Search, Clear, LastPage, FirstPage, FilterList, SaveAlt, Edit, DeleteOutline} from '@mui/icons-material';
 import { format } from 'date-fns'
 
@@ -26,6 +27,7 @@ const tableIcons = {
 export default function TrainingList() {
     
   const [trainings, setTrainings] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => fetchData(), []);
 
@@ -39,10 +41,58 @@ export default function TrainingList() {
     { title: 'Activity', field: 'activity' },
     { title: 'Date', field: 'date', render: rowData => format(new Date(rowData.date), "dd.MM.yyyy hh:mm a") },
     { title: 'Duration (min)', field: 'duration' },
-    { title: 'Customer', field: 'customer.firstname' },
+    { title: 'Customer', render: rowData => rowData.customer ? `${rowData.customer.firstname} ${rowData.customer.lastname}` : ''},
   ];
 
+  const addRow = (newData) => {
+    fetch('https://customerrest.herokuapp.com/api/trainings', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'
+    }, body: JSON.stringify(newData)
+    })
+    .then(res => fetchData())
+    .catch(err => console.error(err));
+  }
+
+  const deleteRow = (id) => {
+    if (window.confirm('Are you sure?')) {
+      fetch(`https://customerrest.herokuapp.com/api/trainings/${id}`, {method: 'DELETE'})
+      .then(res => fetchData())
+      .catch(err => console.error(err))
+
+      setOpen(true);
+    }  
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        style={{background: 'red'}}
+        onClick={handleClose}
+      >
+        <Close fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
   return (
+    <>
+      <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message="Training deleted"
+          action={action}
+        />
     <MaterialTable
       icons={tableIcons}
       columns={columns}
@@ -52,6 +102,29 @@ export default function TrainingList() {
         search: true,
         sorting: true,
       }}
-    />
+      editable={{
+        isEditable: rowData => false, 
+        isEditHidden: rowData => true,
+        isDeletable: rowData => true,
+        isDeleteHidden: rowData => false,
+        onRowAddCancelled: rowData => console.log('Row adding cancelled'),
+        onRowUpdateCancelled: rowData => console.log('Row editing cancelled'),
+        onRowAdd: newData =>
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    addRow(newData);
+                    resolve();
+                }, 1000);
+            }),
+        onRowDelete: oldData =>
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    deleteRow(oldData.id);
+
+                    resolve();
+                }, 1000);
+            })
+    }}
+    /></>
   )
 }
