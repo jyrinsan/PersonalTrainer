@@ -3,6 +3,7 @@ import MaterialTable from 'material-table';
 import { forwardRef } from 'react';
 import { AddBox, ArrowDownward, Check, ChevronLeft, 
   ChevronRight, Search, Clear, LastPage, FirstPage, FilterList, SaveAlt, Edit, DeleteOutline} from '@mui/icons-material';
+import { format } from 'date-fns'
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -22,34 +23,31 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
 };
 
-export default function CustomerList() {
+export default function TrainingList() {
     
-  const [customers, setCustomers] = useState([]);
+  const [trainings, setTrainings] = useState([]);
 
   useEffect(() => fetchData(), []);
 
   const fetchData = () => {
-      fetch('https://customerrest.herokuapp.com/api/customers')
+      fetch('https://customerrest.herokuapp.com/gettrainings')
       .then(response => response.json())
-      .then(data => setCustomers(data.content))  
+      .then(data => setTrainings(data))
   }
 
   const columns = [
-    { title: 'First name', field: 'firstname' },
-    { title: 'Last name', field: 'lastname' },
-    { title: 'Email', field: 'email' },
-    { title: 'Phone', field: 'phone' },
-    { title: 'Address', field: 'streetaddress'},
-    { title: 'Postcode', field: 'postcode'},
-    { title: 'City', field: 'city'}
+    { title: 'Activity', field: 'activity' },
+    { title: 'Date', field: 'date', render: rowData => format(new Date(rowData.date), "dd.MM.yyyy hh:mm a") },
+    { title: 'Duration (min)', field: 'duration' },
+    { title: 'Customer', field: 'customer.firstname' },
   ];
 
   return (
     <MaterialTable
       icons={tableIcons}
       columns={columns}
-      data={customers}
-      title="Customers"
+      data={trainings}
+      title="Trainings"
       options={{
         search: true,
         sorting: true,
