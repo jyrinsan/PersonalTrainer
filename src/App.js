@@ -5,13 +5,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CustomerIcon from '@mui/icons-material/AccountBox';
 import TrainingIcon from '@mui/icons-material/DirectionsRun';
+import EventIcon from '@mui/icons-material/Event';
 import CustomerList from './components/CustomerList';
 import TrainingList from './components/TrainingList';
+import CalendarView from './components/CalendarView';
 
 function App() {
 
   const [state, setState] = React.useState(false);
-  const [trainingList, setTrainingList] = React.useState(false);
+  const [view, setView] = React.useState('customers');
 
 
   const toggleDrawer = (open) => (event) => {
@@ -39,17 +41,23 @@ function App() {
       </List>
       <Divider />
       <List>
-          <ListItem button key="Customers" onClick={() => setTrainingList(false)}>
+          <ListItem button key="Customers" onClick={() => setView('customers')}>
             <ListItemIcon>
               <CustomerIcon fontSize='small' />
             </ListItemIcon>
             <ListItemText primary="Customers" />
           </ListItem>
-          <ListItem button key="Trainings" onClick={() => setTrainingList(true)}>
+          <ListItem button key="Trainings" onClick={() => setView('trainings')}>
             <ListItemIcon>
               <TrainingIcon fontSize='small' />
             </ListItemIcon>
             <ListItemText primary="Trainings" />
+          </ListItem>
+          <ListItem button key="Calendar" onClick={() => setView('calendar')}>
+            <ListItemIcon>
+              <EventIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText primary="Calendar" />
           </ListItem>
       </List>
     </Box>
@@ -83,15 +91,21 @@ function App() {
       </AppBar>
       {state ?
         (<Box sx={{ float: 'right', margin: 2, width: '80%' }}>
-          {trainingList ?
-          (<TrainingList />) :
-          (<CustomerList />)
-          }</Box>) :
+          {view === 'customers' &&
+          <CustomerList />}
+          {view === 'trainings' &&
+          <TrainingList />}
+          {view === 'calendar' &&
+          <CalendarView />}
+          </Box>) :
         (<Box sx={{ float: 'right', margin: 2, width: '98%' }}>
-        {trainingList ?
-          (<TrainingList />) :
-          (<CustomerList />)
-        }</Box>)}
+          {view === 'customers' &&
+          <CustomerList />}
+          {view === 'trainings' &&
+          <TrainingList />}
+          {view === 'calendar' &&
+          <CalendarView />}
+        </Box>)}
     </Box>
   )
 }

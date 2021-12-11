@@ -44,16 +44,6 @@ export default function TrainingList() {
     { title: 'Customer', render: rowData => rowData.customer ? `${rowData.customer.firstname} ${rowData.customer.lastname}` : ''},
   ];
 
-  const addRow = (newData) => {
-    fetch('https://customerrest.herokuapp.com/api/trainings', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'
-    }, body: JSON.stringify(newData)
-    })
-    .then(res => fetchData())
-    .catch(err => console.error(err));
-  }
-
   const deleteRow = (id) => {
     if (window.confirm('Are you sure?')) {
       fetch(`https://customerrest.herokuapp.com/api/trainings/${id}`, {method: 'DELETE'})
@@ -109,13 +99,6 @@ export default function TrainingList() {
         isDeleteHidden: rowData => false,
         onRowAddCancelled: rowData => console.log('Row adding cancelled'),
         onRowUpdateCancelled: rowData => console.log('Row editing cancelled'),
-        onRowAdd: newData =>
-            new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    addRow(newData);
-                    resolve();
-                }, 1000);
-            }),
         onRowDelete: oldData =>
             new Promise((resolve, reject) => {
                 setTimeout(() => {
