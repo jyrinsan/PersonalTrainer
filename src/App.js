@@ -6,9 +6,11 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CustomerIcon from '@mui/icons-material/AccountBox';
 import TrainingIcon from '@mui/icons-material/DirectionsRun';
 import EventIcon from '@mui/icons-material/Event';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import CustomerList from './components/CustomerList';
 import TrainingList from './components/TrainingList';
 import CalendarView from './components/CalendarView';
+import StatisticsView from './components/StatisticsView';
 
 function App() {
 
@@ -59,6 +61,12 @@ function App() {
             </ListItemIcon>
             <ListItemText primary="Calendar" />
           </ListItem>
+          <ListItem button key="Statistics" onClick={() => setView('statistics')}>
+            <ListItemIcon>
+              <BarChartIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText primary="Statistics" />
+          </ListItem>
       </List>
     </Box>
   );
@@ -97,14 +105,16 @@ function App() {
           <TrainingList />}
           {view === 'calendar' &&
           <CalendarView />}
+          {view === 'statistics' &&
+          <StatisticsView />}
           </Box>) :
         (<Box sx={{ float: 'right', margin: 2, width: '98%' }}>
           {view === 'customers' &&
           <CustomerList />}
           {view === 'trainings' &&
           <TrainingList />}
-          {view === 'calendar' &&
-          <CalendarView />}
+          {view === 'statistics' &&
+          <StatisticsView />}
         </Box>)}
     </Box>
   )
