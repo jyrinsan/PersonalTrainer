@@ -113,6 +113,8 @@ function App() {
           <CustomerList />}
           {view === 'trainings' &&
           <TrainingList />}
+          {view === 'calendar' &&
+          <CalendarView />}
           {view === 'statistics' &&
           <StatisticsView />}
         </Box>)}
